@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tanish Raheja | Resume - Data Analyst</title>
+  <meta name="description" content="Tanish Raheja — Resume. Aspiring Data Analyst with Python, SQL, Power BI expertise.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg-deep: #000000;
+      --bg-surface: rgba(30, 30, 30, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-border-hover: rgba(255, 255, 255, 0.25);
+      --text-primary: #f5f5f7;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-tertiary: rgba(255, 255, 255, 0.45);
+      --accent-blue: #0A84FF;
+      --accent-purple: #BF5AF2;
+      --accent-teal: #64D2FF;
+      --accent-green: #30D158;
+      --accent-indigo: #5E5CE6;
+      --radius-window: 16px;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font);
+      background: #050510;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Aurora background (subtle) */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(94, 92, 230, 0.12), transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(191, 90, 242, 0.1), transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(10, 132, 255, 0.08), transparent 50%);
+      animation: bgShift 20s ease-in-out infinite;
+      z-index: 0;
+    }
+    @keyframes bgShift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-3%, -3%) rotate(5deg); }
+    }
+
+    .resume-wrapper {
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* macOS Window */
+    .resume-card {
+      background: var(--bg-surface);
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      border-radius: var(--radius-window);
+      border: 1px solid var(--glass-border);
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.05);
+      width: 100%;
+    }
+
+    /* Window Title Bar */
+    .window-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .traffic-lights {
+      display: flex;
+      gap: 7px;
+    }
+    .traffic-light {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .traffic-light.red { background: #FF5F57; }
+    .traffic-light.yellow { background: #FEBC2E; }
+    .traffic-light.green { background: #28C840; }
+    .window-title-text {
+      flex: 1;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-tertiary);
+    }
+    .window-spacer { width: 52px; }
+
+    .resume-header {
+      background: linear-gradient(135deg, rgba(94, 92, 230, 0.15), rgba(10, 132, 255, 0.08));
+      padding: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .name-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .name h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+    }
+
+    .name .tagline {
+      color: var(--accent-purple);
+      font-weight: 500;
+      margin-top: 0.3rem;
+      font-size: 0.9rem;
+    }
+
+    .role-badge {
+      background: rgba(10, 132, 255, 0.12);
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      border: 1px solid rgba(10, 132, 255, 0.25);
+    }
+    .role-badge p {
+      color: var(--accent-blue);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .contact-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+    }
+    .contact-item i {
+      color: var(--accent-blue);
+      font-size: 0.85rem;
+    }
+
+    .resume-body { padding: 2rem; }
+
+    .resume-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2rem;
+    }
+    @media (max-width: 700px) {
+      .resume-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .resume-header, .resume-body { padding: 1.2rem; }
+      .name h1 { font-size: 1.8rem; }
+    }
+
+    .section { margin-bottom: 1.5rem; }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-purple);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .skill-badge {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.25rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .edu-item { margin-bottom: 1.2rem; }
+    .edu-item h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+    .edu-item .institute {
+      color: var(--accent-purple);
+      font-size: 0.75rem;
+      margin: 0.15rem 0;
+    }
+    .edu-item .date {
+      color: var(--text-tertiary);
+      font-size: 0.65rem;
+      margin-bottom: 0.3rem;
+    }
+    .edu-item .detail {
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      line-height: 1.4;
+    }
+
+    .project-item { margin-bottom: 1.2rem; }
+    .project-item h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0.2rem;
+    }
+    .project-item h4 i {
+      color: var(--accent-blue);
+      font-size: 0.8rem;
+    }
+    .project-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0.25rem 0;
+    }
+    .project-tech span {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.1rem 0.55rem;
+      border-radius: 6px;
+      font-size: 0.6rem;
+      color: var(--text-secondary);
+    }
+    .project-item p {
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      line-height: 1.4;
+    }
+
+    .about-text {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      line-height: 1.55;
+      margin-bottom: 0.8rem;
+      text-align: justify;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      margin: 0.8rem 0;
+    }
+
+    .cert-item { margin-bottom: 0.6rem; }
+    .cert-item p {
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cert-item i {
+      color: var(--accent-green);
+      font-size: 0.7rem;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    .download-btn {
+      background: var(--accent-blue);
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 14px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      font-size: 0.85rem;
+      font-family: var(--font);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(10, 132, 255, 0.35);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.7rem 1.3rem;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-family: var(--font);
+      transition: all 0.3s ease;
+    }
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      transform: translateY(-2px);
+    }
+
+    .watermark {
+      text-align: center;
+      font-size: 0.55rem;
+      color: var(--text-tertiary);
+      margin-top: 1rem;
+    }
+
+    /* PRINT STYLES */
+    @media print {
+      body { background: white; padding: 0; margin: 0; }
+      body::before { display: none; }
+      .button-container, .watermark, .window-titlebar, .back-link { display: none; }
+      .resume-card {
+        background: white !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        backdrop-filter: none !important;
+      }
+      .resume-header {
+        background: white !important;
+        border-bottom: 2px solid #000 !important;
+        padding: 0.5cm !important;
+      }
+      .name h1 { color: black !important; font-size: 22pt !important; }
+      .name .tagline { color: #333 !important; }
+      .role-badge { background: #000 !important; border: none !important; }
+      .role-badge p { color: white !important; }
+      .contact-item { color: #333 !important; }
+      .contact-item i { color: #000 !important; }
+      .section-title { color: #000 !important; border-bottom: 1px solid #ccc !important; }
+      .skill-badge { background: #f0f0f0 !important; border: 1px solid #ccc !important; color: #000 !important; }
+      .edu-item h4, .project-item h4 { color: #000 !important; }
+      .edu-item .institute, .project-item h4 i { color: #000 !important; }
+      .edu-item .date, .edu-item .detail, .project-item p, .about-text, .cert-item p { color: #333 !important; }
+      .project-tech span { background: #f0f0f0 !important; color: #000 !important; }
+      .divider { background: #ccc !important; }
+      .resume-body { padding: 0.5cm !important; }
+      @page { size: A4 portrait; margin: 1cm; }
+    }
+  </style>
+</head>
+<body>
+<div class="resume-wrapper">
+  <div id="resumeCard" class="resume-card">
+
+    <!-- Window Title Bar -->
+    <div class="window-titlebar">
+      <div class="traffic-lights">
+        <div class="traffic-light red"></div>
+        <div class="traffic-light yellow"></div>
+        <div class="traffic-light green"></div>
+      </div>
+      <div class="window-title-text">Resume — Tanish Raheja</div>
+      <div class="window-spacer"></div>
+    </div>
+
+    <div class="resume-header">
+      <div class="name-title">
+        <div class="name">
+          <h1>TANISH RAHEJA</h1>
+          <div class="tagline">Data Analyst | Business Intelligence Enthusiast</div>
+        </div>
+        <div class="role-badge">
+          <p>📊 Aspiring Data Analyst</p>
+        </div>
+      </div>
+      <div class="contact-bar">
+        <div class="contact-item"><i class="fas fa-envelope"></i> <span>rahejatanish29@gmail.com</span></div>
+        <div class="contact-item"><i class="fab fa-github"></i> <span>github.com/tanishraheja</span></div>
+        <div class="contact-item"><i class="fab fa-linkedin"></i> <span>linkedin.com/in/tanishraheja</span></div>
+        <div class="contact-item"><i class="fas fa-map-marker-alt"></i> <span>Orai, Jalaun (UP), India</span></div>
+      </div>
+    </div>
+
+    <div class="resume-body">
+      <div class="resume-grid">
+        <!-- LEFT COLUMN -->
+        <div>
+          <div class="section">
+            <div class="section-title"><i class="fas fa-user-astronaut"></i> ABOUT ME</div>
+            <div class="about-text">
+              Highly motivated and detail-oriented aspiring Data Analyst with hands-on experience in Python, SQL, Excel, Pandas, and Power BI. Skilled in data cleaning, visualization, dashboard creation, and extracting meaningful insights from complex datasets. Passionate about transforming raw data into impactful business decisions through analytical thinking and storytelling dashboards. Currently pursuing B.Com and continuously building real-world projects in data analytics and business intelligence.
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title"><i class="fas fa-code"></i> TECHNICAL SKILLS</div>
+            <div class="skills-list">
+              <span class="skill-badge">Python</span><span class="skill-badge">SQL</span><span class="skill-badge">Pandas</span>
+              <span class="skill-badge">NumPy</span><span class="skill-badge">Power BI</span><span class="skill-badge">Excel</span>
+              <span class="skill-badge">MySQL</span><span class="skill-badge">Data Visualization</span><span class="skill-badge">Dashboard Design</span>
+              <span class="skill-badge">Data Cleaning</span><span class="skill-badge">ETL</span><span class="skill-badge">Storytelling</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title"><i class="fas fa-graduation-cap"></i> EDUCATION</div>
+            <div class="edu-item">
+              <h4>Bachelor of Commerce (B.Com)</h4>
+              <div class="institute">Bundelkhand University, Jhansi</div>
+              <div class="date">📅 2024 - 2027 | Pursuing</div>
+              <div class="detail">Specialization in Business Analytics & Data Systems. Coursework: Financial Accounting, Business Statistics, Economics, Data Analysis.</div>
+            </div>
+            <div class="edu-item">
+              <h4>'O' Level Computer Certification</h4>
+              <div class="institute">Info Park Institute of IT & Management, Orai (NIELIT)</div>
+              <div class="date">📅 2024 - 2025 | Completed - Grade A</div>
+              <div class="detail">Modules: IT Tools, Python Programming, Web Design, Data Management.</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title"><i class="fas fa-certificate"></i> CERTIFICATIONS</div>
+            <div class="cert-item"><p><i class="fas fa-check-circle"></i> NIELIT 'O' Level - Grade A</p></div>
+            <div class="cert-item"><p><i class="fas fa-check-circle"></i> Python for Data Science</p></div>
+            <div class="cert-item"><p><i class="fas fa-check-circle"></i> SQL Fundamentals</p></div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+          <div class="section">
+            <div class="section-title"><i class="fas fa-chart-line"></i> PROJECTS</div>
+            <div class="project-item">
+              <h4><i class="fas fa-users"></i> Customer Behavior Analysis</h4>
+              <div class="project-tech"><span>Python</span><span>SQL</span><span>Pandas</span><span>Power BI</span></div>
+              <p>Built comprehensive analysis of shopping patterns using Python & Pandas. Created interactive Power BI dashboards revealing key customer segments and purchasing trends.</p>
+            </div>
+            <div class="project-item">
+              <h4><i class="fas fa-tv"></i> Netflix Insights Dashboard</h4>
+              <div class="project-tech"><span>Python</span><span>SQL</span><span>Power BI</span></div>
+              <p>Entertainment analytics dashboard exploring genre popularity, release trends, ratings, and streaming insights from Netflix content data.</p>
+            </div>
+            <div class="project-item">
+              <h4><i class="fas fa-chart-line"></i> E‑Commerce Sales Analysis</h4>
+              <div class="project-tech"><span>SQL</span><span>Excel</span><span>Power BI</span></div>
+              <p>Analyzed sales performance, revenue growth, customer purchases, and product trends using SQL and dynamic dashboards.</p>
+            </div>
+            <div class="project-item">
+              <h4><i class="fas fa-code"></i> CourseKart</h4>
+              <div class="project-tech"><span>HTML</span><span>CSS</span></div>
+              <p>Frontend practice project — responsive course-selling landing page built while mastering HTML/CSS.</p>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="section">
+            <div class="section-title"><i class="fas fa-heart"></i> SOFT SKILLS</div>
+            <div class="skills-list">
+              <span class="skill-badge">Analytical Thinking</span>
+              <span class="skill-badge">Problem Solving</span>
+              <span class="skill-badge">Communication</span>
+              <span class="skill-badge">Team Collaboration</span>
+              <span class="skill-badge">Attention to Detail</span>
+              <span class="skill-badge">Time Management</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title"><i class="fas fa-language"></i> LANGUAGES</div>
+            <div class="skills-list">
+              <span class="skill-badge">Hindi (Native)</span>
+              <span class="skill-badge">English (Professional)</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title"><i class="fas fa-heart"></i> INTERESTS</div>
+            <div class="skills-list">
+              <span class="skill-badge">Data Storytelling</span>
+              <span class="skill-badge">Open Source</span>
+              <span class="skill-badge">Tech Blogging</span>
+              <span class="skill-badge">Chess</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Portfolio</a>
+    <button class="download-btn" id="downloadImageBtn"><i class="fas fa-camera"></i> 📸 Download as Image</button>
+    <button class="download-btn" id="downloadPDFBtn"><i class="fas fa-file-pdf"></i> 📄 Save as PDF</button>
+    <button class="download-btn" id="printBtn"><i class="fas fa-print"></i> 🖨️ Print</button>
+  </div>
+  <div class="watermark">
+    <i class="fas fa-database"></i> Tanish Raheja • Data Analyst Portfolio | Orai, UP
+  </div>
+</div>
+
+<script>
+  const downloadImageBtn = document.getElementById('downloadImageBtn');
+  const downloadPDFBtn = document.getElementById('downloadPDFBtn');
+  const printBtn = document.getElementById('printBtn');
+  const resumeCard = document.getElementById('resumeCard');
+
+  downloadImageBtn.addEventListener('click', async () => {
+    try {
+      downloadImageBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Generating...';
+      downloadImageBtn.disabled = true;
+      const canvas = await html2canvas(resumeCard, {
+        scale: 3,
+        backgroundColor: '#1e1e1e',
+        logging: false,
+        useCORS: true
+      });
+      const link = document.createElement('a');
+      link.download = 'Tanish_Raheja_Resume.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      downloadImageBtn.innerHTML = '<i class="fas fa-camera"></i> 📸 Download as Image';
+      downloadImageBtn.disabled = false;
+    } catch (error) {
+      downloadImageBtn.innerHTML = '<i class="fas fa-camera"></i> 📸 Download as Image';
+      downloadImageBtn.disabled = false;
+    }
+  });
+
+  downloadPDFBtn.addEventListener('click', async () => {
+    try {
+      downloadPDFBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Preparing PDF...';
+      downloadPDFBtn.disabled = true;
+      const canvas = await html2canvas(resumeCard, {
+        scale: 2.5,
+        backgroundColor: '#1e1e1e',
+        logging: false,
+        useCORS: true
+      });
+      const { jsPDF } = await import('https://cdn.skypack.dev/jspdf@2.5.1');
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save('Tanish_Raheja_Resume.pdf');
+      downloadPDFBtn.innerHTML = '<i class="fas fa-file-pdf"></i> 📄 Save as PDF';
+      downloadPDFBtn.disabled = false;
+    } catch (error) {
+      window.print();
+      downloadPDFBtn.innerHTML = '<i class="fas fa-file-pdf"></i> 📄 Save as PDF';
+      downloadPDFBtn.disabled = false;
+    }
+  });
+
+  printBtn.addEventListener('click', () => { window.print(); });
+
+  // ═══════════════════════════════════════════
+  // TELEMETRY LOGGING SYSTEM INTEGRATION
+  // ═══════════════════════════════════════════
+  try {
+    let stats = localStorage.getItem('portfolio_analytics');
+    if (stats) {
+      stats = JSON.parse(stats);
+    } else {
+      stats = { page_views: 0, resume_downloads: 0, email_clicks: 0, project_clicks: {}, session_count: 0, clicks_timeline: [] };
+    }
+    stats.page_views = (stats.page_views || 0) + 1;
+    const today = new Date().toISOString().split('T')[0];
+    if (!stats.clicks_timeline) stats.clicks_timeline = [];
+    stats.clicks_timeline.push({ date: today, type: 'page_view', label: 'Resume HTML Page View' });
+    localStorage.setItem('portfolio_analytics', JSON.stringify(stats));
+  } catch(e) {}
+
+  function logResumeClick(label) {
+    try {
+      let stats = localStorage.getItem('portfolio_analytics');
+      if (stats) {
+        stats = JSON.parse(stats);
+        stats.resume_downloads = (stats.resume_downloads || 0) + 1;
+        const today = new Date().toISOString().split('T')[0];
+        if (!stats.clicks_timeline) stats.clicks_timeline = [];
+        stats.clicks_timeline.push({ date: today, type: 'resume', label: label });
+        localStorage.setItem('portfolio_analytics', JSON.stringify(stats));
+      }
+    } catch(e) {}
+  }
+
+  downloadImageBtn.addEventListener('click', () => logResumeClick('Download Image Clicked'));
+  downloadPDFBtn.addEventListener('click', () => logResumeClick('Download PDF Clicked'));
+  printBtn.addEventListener('click', () => logResumeClick('Print Resume Clicked'));
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+  gsap.fromTo(".resume-card",
+    { y: 40, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
+  );
+  gsap.fromTo(".button-container",
+    { y: 20, opacity: 0 },
+    { y: 0, opacity: 1, duration: 0.6, delay: 0.4, ease: "power2.out" }
+  );
+</script>
+</body>
+</html>

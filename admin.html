@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Admin Dashboard | Tanish Raheja</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg-deep: #030308;
+      --bg-surface: rgba(18, 18, 24, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --text-primary: #f5f5f7;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-tertiary: rgba(255, 255, 255, 0.4);
+      --accent-blue: #0A84FF;
+      --accent-purple: #BF5AF2;
+      --accent-teal: #64D2FF;
+      --accent-pink: #FF375F;
+      --accent-green: #30D158;
+      --accent-orange: #FF9F0A;
+      --radius-window: 24px;
+      --radius-card: 16px;
+      --shadow-window: 0 40px 80px -20px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      --smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: var(--font); background: var(--bg-deep); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; position: relative; }
+
+    /* Animated Aurora Background */
+    .aurora-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; overflow: hidden; background: #030308; pointer-events: none;
+    }
+    .aurora-orb {
+      position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.35;
+      mix-blend-mode: screen; will-change: transform;
+    }
+    .aurora-orb:nth-child(1) {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(118, 75, 162, 0.6), transparent 70%);
+      top: -10%; left: -5%;
+      animation: float1 25s ease-in-out infinite;
+    }
+    .aurora-orb:nth-child(2) {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(10, 132, 255, 0.5), transparent 70%);
+      bottom: -10%; right: -5%;
+      animation: float2 20s ease-in-out infinite;
+    }
+    @keyframes float1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(80px,50px) scale(1.15)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-60px,-80px) scale(1.1)} }
+
+    .grain-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1; pointer-events: none; opacity: 0.02;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ═══════════════════════════════════════════
+       PASSCODE LOCK SCREEN
+       ═══════════════════════════════════════════ */
+    .lock-screen {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(3, 3, 8, 0.85);
+      backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.8s var(--smooth), visibility 0.8s;
+    }
+    .lock-screen.hidden { opacity: 0; visibility: hidden; }
+
+    .lock-window {
+      background: rgba(18, 18, 24, 0.55);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-window);
+      padding: 3rem; width: 100%; max-width: 420px;
+      box-shadow: var(--shadow-window);
+      text-align: center;
+      position: relative;
+    }
+    .lock-window::before {
+      content: ''; position: absolute; inset: 0; border-radius: var(--radius-window); padding: 1.5px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 40%, transparent 60%, rgba(255,255,255,0.06));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+
+    .lock-avatar {
+      width: 70px; height: 70px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+      margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; color: #fff;
+      box-shadow: 0 10px 25px rgba(191,90,242,0.4);
+    }
+    .lock-window h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+    .lock-window p { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 2rem; }
+
+    .lock-form { display: flex; flex-direction: column; gap: 1rem; }
+    .input-group { position: relative; }
+    .input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); font-size: 0.95rem; }
+    .lock-input {
+      width: 100%; background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px; padding: 14px 16px 14px 44px;
+      color: #fff; font-size: 0.92rem; outline: none;
+      transition: all 0.3s;
+      font-family: var(--font);
+    }
+    .lock-input:focus { border-color: var(--accent-blue); background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 15px rgba(10,132,255,0.25); }
+
+    .lock-btn {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border: none; border-radius: 12px; padding: 14px;
+      color: #fff; font-size: 0.92rem; font-weight: 600; cursor: pointer;
+      font-family: var(--font); transition: all 0.3s var(--smooth);
+      box-shadow: 0 5px 15px rgba(10,132,255,0.2);
+    }
+    .lock-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(191,90,242,0.4); }
+
+    .lock-err { font-size: 0.78rem; color: var(--accent-pink); margin-top: 0.5rem; display: none; }
+
+    /* ═══════════════════════════════════════════
+       MAIN DASHBOARD
+       ═══════════════════════════════════════════ */
+    .dashboard {
+      position: relative; z-index: 2;
+      max-width: 1200px; margin: 0 auto;
+      padding: 3rem 2rem; opacity: 0; visibility: hidden;
+      transition: opacity 0.8s ease;
+    }
+    .dashboard.show { opacity: 1; visibility: visible; }
+
+    .dashboard-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 2.5rem; gap: 1rem; flex-wrap: wrap;
+    }
+    .dashboard-title h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; background: linear-gradient(135deg, #fff, var(--text-secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .dashboard-title p { font-size: 0.88rem; color: var(--text-tertiary); margin-top: 0.2rem; }
+    
+    .header-actions { display: flex; gap: 1rem; }
+    .btn-secondary {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 12px 20px; color: var(--text-secondary);
+      font-size: 0.88rem; font-weight: 600; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; transform: translateY(-2px); }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem; margin-bottom: 2.5rem;
+    }
+    .stat-card {
+      background: rgba(18, 18, 24, 0.45);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-card); padding: 1.8rem 1.5rem;
+      backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: var(--radius-card); padding: 1px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 50%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    .stat-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; color: #fff; margin-bottom: 1rem;
+    }
+    .stat-icon.blue { background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); }
+    .stat-icon.purple { background: rgba(191, 90, 242, 0.15); color: var(--accent-purple); }
+    .stat-icon.teal { background: rgba(100, 210, 255, 0.15); color: var(--accent-teal); }
+    .stat-icon.pink { background: rgba(255, 55, 95, 0.15); color: var(--accent-pink); }
+    .stat-val { font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+    .stat-lbl { font-size: 0.78rem; color: var(--text-secondary); font-weight: 500; }
+
+    /* Charts Section */
+    .charts-grid {
+      display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.8rem;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 900px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+    .chart-panel {
+      background: rgba(18, 18, 24, 0.45);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-window); padding: 2rem;
+      backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .chart-panel::before {
+      content: ''; position: absolute; inset: 0; border-radius: var(--radius-window); padding: 1.5px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 50%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    .chart-panel h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+    .chart-panel h3 i { color: var(--accent-blue); }
+
+    /* Logs view */
+    .logs-wrapper {
+      max-height: 280px; overflow-y: auto;
+      padding-right: 5px;
+    }
+    .log-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; border-radius: 8px; background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04); margin-bottom: 8px;
+      font-size: 0.76rem;
+    }
+    .log-item:hover { background: rgba(255,255,255,0.04); }
+    .log-type {
+      display: inline-block; padding: 3px 8px; border-radius: 5px;
+      font-weight: 600; text-transform: uppercase; font-size: 0.65rem;
+    }
+    .log-type.page_view { background: rgba(10,132,255,0.12); color: var(--accent-blue); }
+    .log-type.project { background: rgba(191,90,242,0.12); color: var(--accent-purple); }
+    .log-type.resume { background: rgba(255,159,10,0.12); color: var(--accent-orange); }
+    .log-type.email { background: rgba(48,209,88,0.12); color: var(--accent-green); }
+    .log-type.admin_view { background: rgba(255,55,95,0.12); color: var(--accent-pink); }
+    .log-lbl { flex: 1; margin: 0 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .log-date { color: var(--text-tertiary); font-size: 0.72rem; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    /* Project Creation & List Layout */
+    .manager-section {
+      display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.8rem;
+      margin-bottom: 3.5rem;
+    }
+    @media (max-width: 900px) {
+      .manager-section { grid-template-columns: 1fr; }
+    }
+
+    .form-panel {
+      background: rgba(18, 18, 24, 0.45);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-window); padding: 2rem;
+      backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .form-panel::before {
+      content: ''; position: absolute; inset: 0; border-radius: var(--radius-window); padding: 1.5px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 50%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    .form-panel h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+    .form-panel h3 i { color: var(--accent-purple); }
+
+    .project-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
+    .form-control {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px; padding: 11px 14px; color: #fff;
+      font-size: 0.85rem; outline: none; transition: all 0.3s;
+      font-family: var(--font);
+    }
+    .form-control:focus { border-color: var(--accent-purple); background: rgba(255,255,255,0.06); }
+    
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .btn-submit {
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+      border: none; border-radius: 10px; padding: 13px; color: #fff;
+      font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+      font-family: var(--font); margin-top: 0.5rem;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(191,90,242,0.4); }
+
+    /* Projects List Panel */
+    .list-panel {
+      background: rgba(18, 18, 24, 0.45);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-window); padding: 2rem;
+      backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+      position: relative;
+    }
+    .list-panel::before {
+      content: ''; position: absolute; inset: 0; border-radius: var(--radius-window); padding: 1.5px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 50%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    .list-panel h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+    .list-panel h3 i { color: var(--accent-teal); }
+
+    .projects-table-wrapper { overflow-x: auto; width: 100%; }
+    .projects-table {
+      width: 100%; border-collapse: collapse; text-align: left;
+      font-size: 0.82rem; color: var(--text-secondary);
+    }
+    .projects-table th {
+      padding: 12px 14px; border-bottom: 1.5px solid rgba(255,255,255,0.06);
+      font-weight: 700; color: #fff; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .projects-table td { padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+    .projects-table tr:hover td { background: rgba(255,255,255,0.015); color: #fff; }
+    
+    .table-proj-title { font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .table-proj-titlebar { font-family: monospace; font-size: 0.72rem; color: var(--text-tertiary); }
+    
+    .table-proj-icon {
+      width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; margin-right: 10px;
+    }
+    .table-proj-icon.blue { background: rgba(10, 132, 255, 0.15); color: var(--accent-blue); }
+    .table-proj-icon.purple { background: rgba(191, 90, 242, 0.15); color: var(--accent-purple); }
+    .table-proj-icon.teal { background: rgba(100, 210, 255, 0.15); color: var(--accent-teal); }
+    .table-proj-icon.indigo { background: rgba(94, 92, 230, 0.15); color: #5E5CE6; }
+
+    .tag-badge {
+      display: inline-block; padding: 2px 7px; border-radius: 5px;
+      font-size: 0.65rem; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06); margin: 2px;
+      color: var(--text-secondary);
+    }
+    
+    .action-btns { display: flex; gap: 8px; }
+    .btn-action {
+      border: none; border-radius: 6px; width: 28px; height: 28px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; color: #fff; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-action.edit { background: rgba(10, 132, 255, 0.12); color: var(--accent-blue); }
+    .btn-action.edit:hover { background: var(--accent-blue); color: #fff; }
+    .btn-action.delete { background: rgba(255, 55, 95, 0.12); color: var(--accent-pink); }
+    .btn-action.delete:hover { background: var(--accent-pink); color: #fff; }
+
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-tertiary); }
+    .empty-state i { font-size: 2.2rem; margin-bottom: 0.8rem; }
+
+    /* TOAST ALERT SYSTEM */
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 11000; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+      background: rgba(18, 18, 24, 0.9); border: 1px solid var(--accent-purple);
+      box-shadow: 0 10px 30px rgba(191,90,242,0.2), 0 0 0 1px rgba(255,255,255,0.05);
+      border-radius: 12px; padding: 16px 20px; color: #fff; min-width: 280px;
+      display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
+      transform: translateY(20px); opacity: 0; transition: all 0.4s var(--bounce);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { font-size: 1.1rem; }
+    .toast.success i { color: var(--accent-green); }
+    .toast.success { border-color: rgba(48,209,88,0.5); box-shadow: 0 10px 30px rgba(48,209,88,0.15); }
+    .toast.delete { border-color: rgba(255,55,95,0.5); box-shadow: 0 10px 30px rgba(255,55,95,0.15); }
+    .toast.delete i { color: var(--accent-pink); }
+
+    /* CUSTOM CURSOR */
+    .cursor {
+      width: 8px; height: 8px; background: #fff; border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 10000;
+      transition: transform 0.12s ease-out, width 0.2s, height 0.2s;
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+      mix-blend-mode: difference;
+    }
+    .cursor.hover { width: 32px; height: 32px; opacity: 0.5; }
+    @media (max-width: 768px) { .cursor { display: none !important; } }
+  </style>
+</head>
+<body>
+
+<!-- AURORA BACKGROUND -->
+<div class="aurora-bg">
+  <div class="aurora-orb"></div>
+  <div class="aurora-orb"></div>
+</div>
+<div class="grain-overlay"></div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+
+<!-- ══════════════════════════════════════
+     1. PASSCODE LOCK SCREEN
+     ══════════════════════════════════════ -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-window">
+    <div class="lock-avatar"><i class="fas fa-user-shield"></i></div>
+    <h2>Admin Authentication</h2>
+    <p>Accessing Portfolio Telemetry & Data Management Panel</p>
+    <form class="lock-form" id="lockForm" onsubmit="handleLogin(event)">
+      <div class="input-group">
+        <i class="fas fa-key"></i>
+        <input type="password" class="lock-input" id="passcodeField" placeholder="Enter System Passcode" autocomplete="off" required>
+      </div>
+      <button type="submit" class="lock-btn">Unlock Console</button>
+      <div class="lock-err" id="lockError">Incorrect passcode. Access Denied.</div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     2. ADMIN CONSOLE CONTROL CENTER
+     ══════════════════════════════════════ -->
+<div class="dashboard" id="dashboard">
+  
+  <header class="dashboard-header">
+    <div class="dashboard-title">
+      <h1>Console Control Center</h1>
+      <p>Data Telemetry, Performance Insights, and Projects Registry Editor</p>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="btn-secondary"><i class="fas fa-home"></i> Back to Site</a>
+      <button onclick="handleLock()" class="btn-secondary" style="border-color: rgba(255,55,95,0.25); color: var(--accent-pink);"><i class="fas fa-power-off"></i> Lock Console</button>
+    </div>
+  </header>
+
+  <!-- STATS SUMMARY CARDS -->
+  <section class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-eye"></i></div>
+      <div class="stat-val" id="statPageViews">0</div>
+      <div class="stat-lbl">Console & Homepage Views</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon purple"><i class="fas fa-file-arrow-down"></i></div>
+      <div class="stat-val" id="statResume">0</div>
+      <div class="stat-lbl">Resume Queries & Downloads</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon teal"><i class="fas fa-envelope-open-text"></i></div>
+      <div class="stat-val" id="statMail">0</div>
+      <div class="stat-lbl">Inquiries & Contact Clicks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon pink"><i class="fas fa-code-commit"></i></div>
+      <div class="stat-val" id="statProjects">0</div>
+      <div class="stat-lbl">Registered Projects</div>
+    </div>
+  </section>
+
+  <!-- ANALYTICS CHARTS AND REAL-TIME LOGS -->
+  <section class="charts-grid">
+    <div class="chart-panel">
+      <h3><i class="fas fa-chart-line"></i> User Engagement Log-curve</h3>
+      <div style="position: relative; height: 280px; width: 100%;">
+        <canvas id="engagementChart"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-panel">
+      <h3><i class="fas fa-terminal"></i> Activity Telemetry Feed</h3>
+      <div class="logs-wrapper" id="logsFeed">
+        <!-- Log feeds injected dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS MANAGER REGISTRY -->
+  <section class="manager-section">
+    <!-- Form Panel -->
+    <div class="form-panel">
+      <h3><i class="fas fa-folder-plus"></i> <span id="formActionTitle">Register New Project</span></h3>
+      <form class="project-form" id="projectForm" onsubmit="saveProject(event)">
+        <input type="hidden" id="editProjectId" value="">
+        
+        <div class="form-group">
+          <label for="pTitle">Project Title</label>
+          <input type="text" id="pTitle" class="form-control" placeholder="e.g., Spatial Neural Network" required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pTitlebar">Code Filename</label>
+            <input type="text" id="pTitlebar" class="form-control" placeholder="e.g., predictor.py" required>
+          </div>
+          <div class="form-group">
+            <label for="pIcon">Icon Class (FontAwesome)</label>
+            <select id="pIcon" class="form-control" required>
+              <option value="fas fa-users">👥 Team / Users</option>
+              <option value="fas fa-tv">📺 Screen / Netflix</option>
+              <option value="fas fa-chart-line">📈 Sales / Line Chart</option>
+              <option value="fas fa-code">💻 Generic Code</option>
+              <option value="fas fa-database">🗄️ Database / SQL</option>
+              <option value="fas fa-brain">🧠 Intelligence / AI</option>
+              <option value="fas fa-robot">🤖 Automation / Script</option>
+              <option value="fas fa-chart-pie">📊 BI Dashboard</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pColor">Visual Wrap Color Theme</label>
+            <select id="pColor" class="form-control" required>
+              <option value="blue">Blue Spectrum</option>
+              <option value="purple">Purple Spectrum</option>
+              <option value="teal">Teal Spectrum</option>
+              <option value="indigo">Indigo Spectrum</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="pTags">Tech Tags (comma separated)</label>
+            <input type="text" id="pTags" class="form-control" placeholder="e.g., Python, SQL, ETL" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pLink">Target Link URL</label>
+          <input type="url" id="pLink" class="form-control" placeholder="e.g., https://github.com/..." required>
+        </div>
+
+        <div class="form-group">
+          <label for="pDesc">Brief Description</label>
+          <textarea id="pDesc" class="form-control" rows="3" placeholder="Brief outline of implementation accomplishments..." style="resize: none;" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="formSubmitBtn">Submit Project Entry</button>
+        <button type="button" class="btn-secondary" id="formCancelBtn" onclick="resetForm()" style="margin-top:0.4rem; display:none; justify-content:center;">Cancel Editing</button>
+      </form>
+    </div>
+
+    <!-- Active Projects List -->
+    <div class="list-panel">
+      <h3><i class="fas fa-folder-open"></i> Projects Directory Listing</h3>
+      <div class="projects-table-wrapper">
+        <table class="projects-table">
+          <thead>
+            <tr>
+              <th>Project Details</th>
+              <th>Tech Stack</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="projectsListBody">
+            <!-- Dynamic entries injected -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+        <button onclick="resetToDefaults()" class="btn-secondary" style="border-color: rgba(255,159,10,0.3); color: var(--accent-orange);"><i class="fas fa-rotate-left"></i> Restore Defaults</button>
+        <button onclick="clearAnalytics()" class="btn-secondary" style="border-color: rgba(255,55,95,0.3); color: var(--accent-pink);"><i class="fas fa-trash-can"></i> Flush Analytics</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ═══════════════════════════════════════════
+  // SECURITY & ACCESS TIMERS
+  // ═══════════════════════════════════════════
+  const systemPasscode = "admin123";
+
+  // Check login state on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const isLogged = sessionStorage.getItem('admin_authenticated');
+    if (isLogged === 'true') {
+      bypassLock();
+    }
+  });
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const entered = document.getElementById('passcodeField').value;
+    const errorEl = document.getElementById('lockError');
+    const lockWin = document.querySelector('.lock-window');
+
+    if (entered === systemPasscode) {
+      errorEl.style.display = 'none';
+      sessionStorage.setItem('admin_authenticated', 'true');
+      
+      // Animate lock screen exit
+      gsap.to('#lockScreen', {
+        opacity: 0, duration: 0.6, ease: 'power2.out', onComplete: () => {
+          document.getElementById('lockScreen').classList.add('hidden');
+          bypassLock();
+        }
+      });
+    } else {
+      errorEl.style.display = 'block';
+      document.getElementById('passcodeField').value = '';
+      // Shake animation
+      gsap.fromTo(lockWin, 
+        { x: -10 },
+        { x: 0, duration: 0.08, repeat: 5, yoyo: true, ease: 'linear' }
+      );
+    }
+  }
+
+  function bypassLock() {
+    document.getElementById('lockScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.add('show');
+    
+    // Animate stats cards entry
+    gsap.from('.stat-card', {
+      duration: 0.6, y: 30, opacity: 0, stagger: 0.08, ease: 'power3.out'
+    });
+    
+    // Animate panels entry
+    gsap.from('.chart-panel, .form-panel, .list-panel', {
+      duration: 0.8, y: 40, opacity: 0, stagger: 0.1, delay: 0.2, ease: 'power3.out'
+    });
+
+    initData();
+  }
+
+  function handleLock() {
+    sessionStorage.removeItem('admin_authenticated');
+    document.getElementById('dashboard').classList.remove('show');
+    document.getElementById('lockScreen').classList.remove('hidden');
+    gsap.to('#lockScreen', { opacity: 1, duration: 0.4 });
+    document.getElementById('passcodeField').value = '';
+    document.getElementById('lockError').style.display = 'none';
+  }
+
+  // ═══════════════════════════════════════════
+  // TELEMETRY & SYSTEM INITIALIZATION
+  // ═══════════════════════════════════════════
+  let activeChart = null;
+
+  function initData() {
+    // 1. Render Stats
+    updateStatsCards();
+    
+    // 2. Render Project Manager
+    updateProjectsList();
+    
+    // 3. Render Chart & Logs
+    renderAnalyticsChart();
+    renderLogsFeed();
+  }
+
+  function getAnalytics() {
+    let stats = localStorage.getItem('portfolio_analytics');
+    if (!stats) {
+      return { page_views: 0, resume_downloads: 0, email_clicks: 0, project_clicks: {}, session_count: 0, clicks_timeline: [] };
+    }
+    try {
+      return JSON.parse(stats);
+    } catch(e) {
+      return { page_views: 0, resume_downloads: 0, email_clicks: 0, project_clicks: {}, session_count: 0, clicks_timeline: [] };
+    }
+  }
+
+  function updateStatsCards() {
+    const data = getAnalytics();
+    const projCount = getProjectsLocal().length;
+
+    // Set counts dynamically
+    document.getElementById('statPageViews').textContent = (data.page_views || 0).toLocaleString();
+    document.getElementById('statResume').textContent = (data.resume_downloads || 0).toLocaleString();
+    document.getElementById('statMail').textContent = (data.email_clicks || 0).toLocaleString();
+    document.getElementById('statProjects').textContent = projCount;
+  }
+
+  function getProjectsLocal() {
+    let stored = localStorage.getItem('portfolio_projects');
+    if (!stored) {
+      // Return hardcoded default set if not present
+      return [
+        { id: "project1", titlebar: "customer_analysis.py", title: "Customer Behavior Analysis", desc: "Built behavior analysis pipeline in Python/SQL.", icon: "fas fa-users", iconColor: "blue", tags: ["Python", "SQL", "Pandas"], link: "#" },
+        { id: "project2", titlebar: "netflix_insights.py", title: "Netflix Insights Dashboard", desc: "Entertainment analytics dashboard in Power BI.", icon: "fas fa-tv", iconColor: "purple", tags: ["Python", "Power BI"], link: "#" },
+        { id: "project3", titlebar: "ecommerce_sales.sql", title: "E‑Commerce Sales Analysis", desc: "Sales data modeling and SQL transformations.", icon: "fas fa-chart-line", iconColor: "teal", tags: ["SQL", "Excel"], link: "#" },
+        { id: "project4", titlebar: "coursekart.html", title: "CourseKart", desc: "Frontend landing page built in HTML/CSS.", icon: "fas fa-code", iconColor: "indigo", tags: ["HTML", "CSS"], link: "#" }
+      ];
+    }
+    try {
+      return JSON.parse(stored);
+    } catch(e) {
+      return [];
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  // PROJECTS LIST & MANAGER ACTIONS
+  // ═══════════════════════════════════════════
+  function updateProjectsList() {
+    const listBody = document.getElementById('projectsListBody');
+    const projects = getProjectsLocal();
+    listBody.innerHTML = '';
+
+    if (projects.length === 0) {
+      listBody.innerHTML = `
+        <tr>
+          <td colspan="3">
+            <div class="empty-state">
+              <i class="fas fa-folder-open"></i>
+              <p>No projects registered in local registry.</p>
+            </div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    projects.forEach(p => {
+      const row = document.createElement('tr');
+      const tagsHTML = p.tags.map(t => `<span class="tag-badge">${t}</span>`).join('');
+      
+      row.innerHTML = `
+        <td>
+          <div style="display: flex; align-items: center;">
+            <div class="table-proj-icon ${p.iconColor || 'blue'}"><i class="${p.icon || 'fas fa-code'}"></i></div>
+            <div>
+              <div class="table-proj-title">${p.title}</div>
+              <div class="table-proj-titlebar">${p.titlebar || 'project.py'}</div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div style="max-width: 260px;">${tagsHTML}</div>
+        </td>
+        <td>
+          <div class="action-btns">
+            <button onclick="editProject('${p.id}')" class="btn-action edit" title="Edit Metadata"><i class="fas fa-pen"></i></button>
+            <button onclick="deleteProject('${p.id}')" class="btn-action delete" title="Delete Project"><i class="fas fa-trash"></i></button>
+          </div>
+        </td>
+      `;
+      listBody.appendChild(row);
+    });
+  }
+
+  function saveProject(e) {
+    e.preventDefault();
+    const id = document.getElementById('editProjectId').value;
+    const title = document.getElementById('pTitle').value;
+    const titlebar = document.getElementById('pTitlebar').value;
+    const icon = document.getElementById('pIcon').value;
+    const iconColor = document.getElementById('pColor').value;
+    const tags = document.getElementById('pTags').value.split(',').map(t => t.trim()).filter(t => t.length > 0);
+    const link = document.getElementById('pLink').value;
+    const desc = document.getElementById('pDesc').value;
+
+    let projects = getProjectsLocal();
+    
+    if (id) {
+      // Edit mode
+      projects = projects.map(p => {
+        if (p.id === id) {
+          return { id, titlebar, title, desc, icon, iconColor, tags, link };
+        }
+        return p;
+      });
+      showToast('Project updated successfully!', 'success');
+    } else {
+      // Create mode
+      const newProj = {
+        id: 'project_' + Date.now(),
+        titlebar, title, desc, icon, iconColor, tags, link
+      };
+      projects.push(newProj);
+      showToast('New project registered successfully!', 'success');
+    }
+
+    localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+    resetForm();
+    initData();
+  }
+
+  function editProject(id) {
+    const projects = getProjectsLocal();
+    const p = projects.find(item => item.id === id);
+    if (!p) return;
+
+    document.getElementById('editProjectId').value = p.id;
+    document.getElementById('pTitle').value = p.title;
+    document.getElementById('pTitlebar').value = p.titlebar;
+    document.getElementById('pIcon').value = p.icon;
+    document.getElementById('pColor').value = p.iconColor;
+    document.getElementById('pTags').value = p.tags.join(', ');
+    document.getElementById('pLink').value = p.link;
+    document.getElementById('pDesc').value = p.desc;
+
+    document.getElementById('formActionTitle').textContent = "Modify Project Registry";
+    document.getElementById('formSubmitBtn').textContent = "Save Changes";
+    document.getElementById('formCancelBtn').style.display = "inline-flex";
+
+    gsap.fromTo('.form-panel', { x: -10 }, { x: 0, duration: 0.1, repeat: 3, yoyo: true });
+  }
+
+  function deleteProject(id) {
+    if (confirm("Are you absolutely sure you want to remove this project? This will erase it from the registry.")) {
+      let projects = getProjectsLocal();
+      projects = projects.filter(p => p.id !== id);
+      localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+      showToast('Project erased from registry.', 'delete');
+      initData();
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('projectForm').reset();
+    document.getElementById('editProjectId').value = '';
+    document.getElementById('formActionTitle').textContent = "Register New Project";
+    document.getElementById('formSubmitBtn').textContent = "Submit Project Entry";
+    document.getElementById('formCancelBtn').style.display = "none";
+  }
+
+  function resetToDefaults() {
+    if (confirm("Are you sure you want to restore the default project listing? This will overwrite your custom modifications.")) {
+      localStorage.removeItem('portfolio_projects');
+      showToast('Default listing restored.', 'success');
+      initData();
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  // TELEMETRY & GRAPH RENDERING
+  // ═══════════════════════════════════════════
+  function renderAnalyticsChart() {
+    const data = getAnalytics();
+    const ctx = document.getElementById('engagementChart').getContext('2d');
+    
+    // Group timeline data by date and count
+    const timelines = data.clicks_timeline || [];
+    const dateCounts = {};
+    
+    // Initialize last 7 days of default labels
+    for(let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const str = d.toISOString().split('T')[0];
+      dateCounts[str] = { views: 0, resume: 0, email: 0 };
+    }
+
+    timelines.forEach(t => {
+      if (dateCounts[t.date] !== undefined) {
+        if (t.type === 'page_view' || t.type === 'resume_view') dateCounts[t.date].views++;
+        else if (t.type === 'resume') dateCounts[t.date].resume++;
+        else if (t.type === 'email') dateCounts[t.date].email++;
+      } else {
+        // Fallback for days outside last 7 days (just in case)
+        dateCounts[t.date] = { views: 0, resume: 0, email: 0 };
+        if (t.type === 'page_view' || t.type === 'resume_view') dateCounts[t.date].views++;
+        else if (t.type === 'resume') dateCounts[t.date].resume++;
+        else if (t.type === 'email') dateCounts[t.date].email++;
+      }
+    });
+
+    const labels = Object.keys(dateCounts).sort();
+    const pageViewsData = labels.map(l => dateCounts[l].views);
+    const resumeData = labels.map(l => dateCounts[l].resume);
+    const inquiriesData = labels.map(l => dateCounts[l].email);
+
+    if (activeChart) {
+      activeChart.destroy();
+    }
+
+    activeChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels.map(l => {
+          const parts = l.split('-');
+          return parts[1] + '/' + parts[2];
+        }),
+        datasets: [
+          {
+            label: 'Views (Pages)',
+            data: pageViewsData,
+            borderColor: '#0A84FF',
+            backgroundColor: 'rgba(10, 132, 255, 0.05)',
+            borderWidth: 3,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#0A84FF',
+            pointRadius: 4
+          },
+          {
+            label: 'Resume downloads',
+            data: resumeData,
+            borderColor: '#BF5AF2',
+            backgroundColor: 'rgba(191, 90, 242, 0.05)',
+            borderWidth: 3,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#BF5AF2',
+            pointRadius: 4
+          },
+          {
+            label: 'Inquiries',
+            data: inquiriesData,
+            borderColor: '#30D158',
+            backgroundColor: 'rgba(48, 209, 88, 0.05)',
+            borderWidth: 3,
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#30D158',
+            pointRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { color: '#f5f5f7', font: { family: 'Inter', size: 11, weight: 600 } }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(18,18,24,0.95)',
+            borderColor: 'rgba(255,255,255,0.08)',
+            borderWidth: 1,
+            titleColor: '#fff',
+            titleFont: { family: 'Inter', weight: 700 },
+            bodyFont: { family: 'Inter' }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,0.03)' },
+            ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'Inter' } }
+          },
+          y: {
+            grid: { color: 'rgba(255,255,255,0.03)' },
+            ticks: { 
+              color: 'rgba(255,255,255,0.5)', 
+              font: { family: 'Inter' },
+              stepSize: 1,
+              precision: 0
+            },
+            min: 0
+          }
+        }
+      }
+    });
+  }
+
+  function renderLogsFeed() {
+    const logsFeed = document.getElementById('logsFeed');
+    const data = getAnalytics();
+    const timeline = data.clicks_timeline || [];
+    
+    logsFeed.innerHTML = '';
+
+    if (timeline.length === 0) {
+      logsFeed.innerHTML = '<div class="empty-state" style="padding:1.5rem;"><p>No logged activities recorded.</p></div>';
+      return;
+    }
+
+    // Show newest first
+    const reversed = [...timeline].reverse();
+
+    reversed.forEach(log => {
+      const item = document.createElement('div');
+      item.className = 'log-item';
+      
+      const typeHTML = `<span class="log-type ${log.type}">${log.type.replace('_', ' ')}</span>`;
+      const labelHTML = `<span class="log-lbl" title="${log.label}">${log.label}</span>`;
+      const dateHTML = `<span class="log-date">${log.date}</span>`;
+
+      item.innerHTML = typeHTML + labelHTML + dateHTML;
+      logsFeed.appendChild(item);
+    });
+  }
+
+  function clearAnalytics() {
+    if (confirm("Are you absolutely sure you want to flush all telemetry data? This will reset all visitor views, clicks, and logs to zero.")) {
+      const resetStats = { page_views: 0, resume_downloads: 0, email_clicks: 0, project_clicks: {}, session_count: 0, clicks_timeline: [] };
+      localStorage.setItem('portfolio_analytics', JSON.stringify(resetStats));
+      showToast('Telemetry logs cleared.', 'delete');
+      initData();
+    }
+  }
+
+  // ═══════════════════════════════════════════
+  // VISUAL SYSTEMS (TOASTS + CURSOR)
+  // ═══════════════════════════════════════════
+  function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    const icon = type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation';
+    toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+    
+    container.appendChild(toast);
+    
+    // Trigger entrance
+    setTimeout(() => toast.classList.add('show'), 50);
+
+    // Trigger removal
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  }
+
+  // Custom Cursor
+  if (window.innerWidth > 768) {
+    const cur = document.getElementById('cursor');
+    let mx = 0, my = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cur.style.left = mx - 4 + 'px'; cur.style.top = my - 4 + 'px';
+    });
+
+    document.querySelectorAll('a, button, select, input, textarea, tr').forEach(el => {
+      el.addEventListener('mouseenter', () => cur.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cur.classList.remove('hover'));
+    });
+  }
+</script>
+</body>
+</html>
